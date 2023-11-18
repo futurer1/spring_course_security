@@ -1,5 +1,6 @@
 package com.mikhail.spring.security.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -7,28 +8,37 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.User.UserBuilder;
 
+import javax.sql.DataSource;
+
 @EnableWebSecurity
 public class MySecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private DataSource dataSource;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
-        UserBuilder userBuilder = User.withDefaultPasswordEncoder();
 
-        auth.inMemoryAuthentication() // в процессе аутентификации
-                // будет сравнение с паролями в памяти
-                .withUser(
-                        userBuilder.username("mikhail")
-                                .password("test")
-                                .roles("EMPLOYEE"))
-                .withUser(
-                        userBuilder.username("ivan")
-                                .password("test1")
-                                .roles("HR"))
-                .withUser(
-                        userBuilder.username("semen")
-                                .password("test2")
-                                .roles("HR", "MANAGER"))
-        ;
+        auth.jdbcAuthentication().dataSource(dataSource);
+
+//        UserBuilder userBuilder = User.withDefaultPasswordEncoder();
+//
+//        auth.inMemoryAuthentication() // в процессе аутентификации
+//                // будет сравнение с паролями в памяти
+//                .withUser(
+//                        userBuilder.username("mikhail")
+//                                .password("test")
+//                                .roles("EMPLOYEE"))
+//                .withUser(
+//                        userBuilder.username("ivan")
+//                                .password("test1")
+//                                .roles("HR"))
+//                .withUser(
+//                        userBuilder.username("semen")
+//                                .password("test2")
+//                                .roles("HR", "MANAGER"))
+//        ;
     }
 
     @Override
